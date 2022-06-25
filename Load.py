@@ -3,6 +3,7 @@ from OpenGL.GL import *
 import numpy as np
 import glm
 from PIL import Image
+from PIL._imaging import display
 
 
 def load_model_from_file(filename):
@@ -63,6 +64,9 @@ def load_texture_from_file(texture_id, img_textura):
     img_width = img.size[0]
     img_height = img.size[1]
     image_data = img.tobytes("raw", "RGB", 0, -1)
+    print(img_textura)
+    print(img_height)
+    print(img_width)
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, img_width, img_height, 0, GL_RGB, GL_UNSIGNED_BYTE, image_data)
 
 
@@ -72,9 +76,10 @@ def load_object(vertices_list, textures_coord_list, obj_filename, texture_filena
     print('Processando modelo cube.obj. Vertice inicial:', len(vertices_list))
     text = modelo['faces'][0][2]
     texture_counter = 1
+    print(text)
     for face in modelo['faces']:
         if text != face[2]:
-            print(len(vertices_list))
+            print(face[2])
             text = face[2]
             retornos[texture_counter-1][1] = len(vertices_list)-1
             texture_counter += 1
@@ -84,7 +89,6 @@ def load_object(vertices_list, textures_coord_list, obj_filename, texture_filena
             vertices_list.append(modelo['vertices'][vertice_id - 1])
         for texture_id in face[1]:
             textures_coord_list.append(modelo['texture'][texture_id - 1])
-    print('Processando modelo cube.obj. Vertice final:', len(vertices_list))
     retornos[texture_counter-1][1] = len(vertices_list)
     print(texture_counter)
     for i in range(0, texture_counter):

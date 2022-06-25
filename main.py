@@ -13,8 +13,8 @@ largura = 1200
 vertices_list = []
 normals_list = []
 textures_coord_list = []
-obj_filenames = [['test.obj',['Pineapple_Tex.png',  'metal.jpg',  'Glass.jpg', 'metal.jpg', 'metal.jpg',
-                   'metal.jpg', 'metal.jpg', 'metal.jpg', 'metal.jpg']]]
+obj_filenames = [["test1.obj",[ 'Sand.png',".png",   "Squidward's House_Tex.jpg", 'Sand.png', 'Sand.png',
+                   'Sand.png', 'Sand.png', 'Sand.png', 'Sand.png']]]
 
 
 
