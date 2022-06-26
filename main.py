@@ -13,18 +13,18 @@ largura = 1200
 vertices_list = []
 normals_list = []
 textures_coord_list = []
-obj_filenames = [["test1.obj",[ 'Sand.png',".png",   "Squidward's House_Tex.jpg", 'Sand.png', 'Sand.png',
-                   'Sand.png', 'Sand.png', 'Sand.png', 'Sand.png']]]
-
+obj_filenames = [["untitled.obj",[ 'Sand.png',  "Squidward's House_Tex.jpg", "Squidward's House_Tex2.jpg",  'madera.jpg', 'madera.jpg',
+                   'madera.jpg', 'madera.jpg', 'madera.jpg', 'madera.jpg']]]
 
 
 obj_parameters = []
 
 for i in range(0, len(obj_filenames)):
+    # TODO: arrumar esse erro com i, se você colocar mais de 1 obj ele caga mole
     temp = load_object(vertices_list, textures_coord_list, obj_filenames[i][0], obj_filenames[i][1], i)
     obj_parameters = obj_parameters + temp
 print(obj_parameters)
-print(len(vertices_list))
+
 # Request a buffer slot from GPU
 buffer = glGenBuffers(2)
 vertices = np.zeros(len(vertices_list), [("position", np.float32, 3)])
@@ -88,10 +88,9 @@ cameraUp = glm.vec3(0.0, 1.0, 0.0);
 
 polygonal_mode = False
 
-
+diff = False
 def key_event(window, key, scancode, action, mods):
-    global cameraPos, cameraFront, cameraUp, polygonal_mode
-
+    global cameraPos, cameraFront, cameraUp, polygonal_mode, diff
     cameraSpeed = 0.2
     if key == 87 and (action == 1 or action == 2):  # tecla W
         cameraPos += cameraSpeed * cameraFront
@@ -205,6 +204,8 @@ while not glfw.window_should_close(window):
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
 
     for i in range(0, len(obj_parameters)):
+        if i == 3:
+            continue
         desenha_obj(i)
 
     mat_view = view()

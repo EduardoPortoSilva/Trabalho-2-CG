@@ -23,7 +23,8 @@ def load_model_from_file(filename):
 
         ### recuperando vertices
         if values[0] == 'v':
-            vertices.append(values[1:4])
+            if values[1:4] not in vertices:
+                vertices.append(values[1:4])
 
 
         ### recuperando coordenadas de textura
@@ -64,9 +65,6 @@ def load_texture_from_file(texture_id, img_textura):
     img_width = img.size[0]
     img_height = img.size[1]
     image_data = img.tobytes("raw", "RGB", 0, -1)
-    print(img_textura)
-    print(img_height)
-    print(img_width)
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, img_width, img_height, 0, GL_RGB, GL_UNSIGNED_BYTE, image_data)
 
 
@@ -75,22 +73,21 @@ def load_object(vertices_list, textures_coord_list, obj_filename, texture_filena
     retornos = [[len(vertices_list), 0]]
     print('Processando modelo cube.obj. Vertice inicial:', len(vertices_list))
     text = modelo['faces'][0][2]
+    text2 = ""
     texture_counter = 1
     print(text)
     for face in modelo['faces']:
         if text != face[2]:
-            print(face[2])
             text = face[2]
-            retornos[texture_counter-1][1] = len(vertices_list)-1
+            retornos[texture_counter - 1][1] = len(vertices_list) - 1
             texture_counter += 1
-            retornos.append([len(vertices_list),0])
+            retornos.append([len(vertices_list), 0])
 
         for vertice_id in face[0]:
             vertices_list.append(modelo['vertices'][vertice_id - 1])
         for texture_id in face[1]:
             textures_coord_list.append(modelo['texture'][texture_id - 1])
-    retornos[texture_counter-1][1] = len(vertices_list)
-    print(texture_counter)
-    for i in range(0, texture_counter):
-        load_texture_from_file(obj_id+i, texture_filenames[i])
+    retornos[texture_counter - 1][1] = len(vertices_list)
+    for i in range(0, len(texture_filenames)):
+        load_texture_from_file(obj_id + i, texture_filenames[i])
     return retornos
