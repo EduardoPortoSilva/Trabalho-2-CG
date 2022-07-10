@@ -112,9 +112,15 @@ vertices_list = []
 normals_list = []
 textures_coord_list = []
 
-model_files = [['house.obj', 'house.jpg'],['outhouse.obj','outhouse.png'],['table.obj', 'table.jpg']]
+model_files = [['house.obj', 'house.jpg'],['outhouse.obj','outhouse.png'],['sky.obj','sky.jpg'],
+               ['table.obj', 'table.jpg'],['chair.obj', 'chair.jpg'],['black-chair.obj', 'black-chair.jpg']]
 #model_files = [['table.obj', 'table.jpg']]
-model_geometrical_init_infos = [{'r':[0.00001,0.00001,0.00001],'s':[.1,.1,.1],'t':[0,0,0], 'a':0,'kd':0.3,'ka':0.5},{'r':[0.00001,0.00001,0.00001],'s':[.1001,.1001,.1001],'t':[0,0,0], 'a':0,'kd':0.3,'ka':0.5},{'r':[0.00001,0.00001,0.00001],'s':[.1,.1,.1],'t':[0,0,0], 'a':0,'kd':0.3,'ka':0.5},{'r':[0.00001,0.00001,0.00001]}]
+model_geometrical_init_infos = [{'r':[1,0,0],'s':[.3,.3,.3],'t':[0,0,-0.59], 'a':-90,'kd':0.3,'ka':0.5},
+                                {'r':[1,0,0],'s':[.300001,.300001,.300001],'t':[0,0,-0.59], 'a':-90,'kd':0.3,'ka':0.5},
+                                {'r':[1,0,0],'s':[.9,.9,.9],'t':[0,0,0], 'a':-90,'kd':0.3,'ka':0.5},
+                                {'r':[1,1,1],'s':[.3,.3,.3],'t':[0.2,-1.25,0.3], 'a':0,'kd':0.3,'ka':0.5},
+                                {'r':[0,1,0],'s':[.002,.002,.002],'t':[-.25,-.9,0], 'a':-45,'kd':0.3,'ka':0.5},
+                                {'r':[0,1,0],'s':[.002,.002,.002],'t':[-.25,-.9,0], 'a':-45,'kd':0.3,'ka':0.5}]
 #model_geometrical_init_infos = [{'r':[0.00001,0.00001,0.00001],'s':[.1,.1,.1],'t':[0,0,0], 'a':0,'kd':0.3,'ka':0.5}]
 model_infos = []
 for idx, model_file in enumerate(model_files):
@@ -131,6 +137,7 @@ for idx, model_file in enumerate(model_files):
     print(f'Processando modelo {model_file[0]}. Vertice final:', len(vertices_list))
     last_point = len(vertices_list)
     model_infos.append({'init':initial_point, 'last':last_point})
+    print(idx)
     load_texture_from_file(idx, model_file[1])
 
 buffer = glGenBuffers(3)
@@ -311,7 +318,7 @@ import math
 glEnable(GL_DEPTH_TEST)  ### importante para 3D
 
 ang = 0.0
-
+temp = True
 while not glfw.window_should_close(window):
 
     glfw.poll_events()
@@ -331,6 +338,19 @@ while not glfw.window_should_close(window):
 
     for idx,obj in enumerate(model_infos):
         obj_geo = model_geometrical_init_infos[idx]
+        if temp:
+            print(obj, idx, obj_geo)
+
+        angle = obj_geo['a']
+        r_x = obj_geo['r'][0]
+        r_y = obj_geo['r'][1]
+        r_z = obj_geo['r'][2]
+        t_x = obj_geo['t'][0]
+        t_y = obj_geo['t'][1]
+        t_z = obj_geo['t'][2]
+        s_x = obj_geo['s'][0]
+        s_y = obj_geo['s'][1]
+        s_z = obj_geo['s'][2]
         mat_model = model(obj_geo['a'], obj_geo['r'][0], obj_geo['r'][1], obj_geo['r'][2], obj_geo['t'][0], obj_geo['t'][1], obj_geo['t'][2], obj_geo['s'][0], obj_geo['s'][1], obj_geo['s'][2])
         loc_model = glGetUniformLocation(program, "model")
         glUniformMatrix4fv(loc_model, 1, GL_TRUE, mat_model)
@@ -342,8 +362,8 @@ while not glfw.window_should_close(window):
         glBindTexture(GL_TEXTURE_2D, idx)
 
         # desenha o modelo
-        glDrawArrays(GL_TRIANGLES, obj['init'], obj['last'])  ## renderizando
-
+        glDrawArrays(GL_TRIANGLES, obj['init'], obj['last']-1)  ## renderizando
+    temp = False
     mat_view = view()
     loc_view = glGetUniformLocation(program, "view")
     glUniformMatrix4fv(loc_view, 1, GL_TRUE, mat_view)
