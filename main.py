@@ -8,7 +8,7 @@ glfw.init()
 glfw.window_hint(glfw.VISIBLE, glfw.FALSE);
 altura = 1600
 largura = 1200
-window = glfw.create_window(largura, altura, "Iluminação", None, None)
+window = glfw.create_window(largura, altura, "Trabalho 2 CG", None, None)
 glfw.make_context_current(window)
 
 vertex_code = """
@@ -319,16 +319,6 @@ while not glfw.window_should_close(window):
     model_geometrical_init_infos[8]['a'] += 0.1
     for idx,obj in enumerate(model_infos):
         obj_geo = model_geometrical_init_infos[idx]
-        angle = obj_geo['a']
-        r_x = obj_geo['r'][0]
-        r_y = obj_geo['r'][1]
-        r_z = obj_geo['r'][2]
-        t_x = obj_geo['t'][0]
-        t_y = obj_geo['t'][1]
-        t_z = obj_geo['t'][2]
-        s_x = obj_geo['s'][0]
-        s_y = obj_geo['s'][1]
-        s_z = obj_geo['s'][2]
         mat_model = model(obj_geo['a'], obj_geo['r'][0], obj_geo['r'][1], obj_geo['r'][2], obj_geo['t'][0], obj_geo['t'][1], obj_geo['t'][2], obj_geo['s'][0], obj_geo['s'][1], obj_geo['s'][2])
         loc_model = glGetUniformLocation(program, "model")
         glUniformMatrix4fv(loc_model, 1, GL_TRUE, mat_model)
