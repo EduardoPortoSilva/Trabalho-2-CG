@@ -1,16 +1,4 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# # Aula 10.Ex1 - Modelo de Iluminação - Ambiente e Difusa
-
-# ### Primeiro, importamos as bibliotecas necessárias.
-# Verifique no código anterior um script para instalar as dependências necessárias (OpenGL e GLFW) antes de prosseguir.
-
-# In[ ]:
-
-
 import glfw
-from OpenGL.GL import *
 import numpy as np
 import glm
 
@@ -112,16 +100,19 @@ vertices_list = []
 normals_list = []
 textures_coord_list = []
 
-model_files = [['house.obj', 'house.jpg'],['outhouse.obj','outhouse.png'],['sky.obj','sky.jpg'],
-               ['table.obj', 'table.jpg'],['chair.obj', 'chair.jpg'],['black-chair.obj', 'black-chair.jpg']]
-#model_files = [['table.obj', 'table.jpg']]
+model_files = [['house.obj', 'house.jpg'],['outhouse.obj','outhouse.png'],['sky.obj','sky.png'],
+               ['table.obj', 'table.jpg'],['chair.obj', 'chair.jpg'],['stone.obj', 'stone.png'],
+               ['stone2.obj', 'stone2.jpg'],['stick.obj','stick.jpg'],['ball.obj', 'ball.png']]
 model_geometrical_init_infos = [{'r':[1,0,0],'s':[.3,.3,.3],'t':[0,0,-0.59], 'a':-90,'kd':0.3,'ka':0.5},
                                 {'r':[1,0,0],'s':[.300001,.300001,.300001],'t':[0,0,-0.59], 'a':-90,'kd':0.3,'ka':0.5},
-                                {'r':[1,0,0],'s':[.9,.9,.9],'t':[0,0,0], 'a':-90,'kd':0.3,'ka':0.5},
+                                {'r':[1,0,0],'s':[1.5,1.5,1.5],'t':[0,0,.55], 'a':-90,'kd':0.3,'ka':0.5},
                                 {'r':[1,1,1],'s':[.3,.3,.3],'t':[0.2,-1.25,0.3], 'a':0,'kd':0.3,'ka':0.5},
+
                                 {'r':[0,1,0],'s':[.002,.002,.002],'t':[-.25,-.9,0], 'a':-45,'kd':0.3,'ka':0.5},
-                                {'r':[0,1,0],'s':[.002,.002,.002],'t':[-.25,-.9,0], 'a':-45,'kd':0.3,'ka':0.5}]
-#model_geometrical_init_infos = [{'r':[0.00001,0.00001,0.00001],'s':[.1,.1,.1],'t':[0,0,0], 'a':0,'kd':0.3,'ka':0.5}]
+                                {'r':[0,1,0],'s':[.02,.02,.02],'t':[-.7,-.95,0], 'a':45,'kd':0.3,'ka':0.5},
+                                {'r':[0,1,0],'s':[.01,.01,.01],'t':[-.7,-.8,0], 'a':0,'kd':0.3,'ka':0.5},
+                                {'r':[0,1,0],'s':[.03,.03,.03],'t':[.3,-.9,0], 'a':0,'kd':0.3,'ka':0.5},
+                                {'r':[0,1,0],'s':[.3,.3,.3],'t':[1,-.9,0], 'a':0,'kd':0.3,'ka':0.5}]
 model_infos = []
 for idx, model_file in enumerate(model_files):
     modelo = load_model_from_file(model_file[0])
@@ -137,9 +128,7 @@ for idx, model_file in enumerate(model_files):
     print(f'Processando modelo {model_file[0]}. Vertice final:', len(vertices_list))
     last_point = len(vertices_list)
     model_infos.append({'init':initial_point, 'last':last_point})
-    print(idx)
     load_texture_from_file(idx, model_file[1])
-
 buffer = glGenBuffers(3)
 
 vertices = np.zeros(len(vertices_list), [("position", np.float32, 3)])
@@ -218,6 +207,18 @@ def key_event(window, key, scancode, action, mods):
     if key == 264 and (action == 1 or action == 2):  # tecla baixo
         kd_inc += 0.05
 
+    if cameraPos.x >= 1:
+        cameraPos.x = .98
+    if cameraPos.y >= 1:
+        cameraPos.y = .98
+    if cameraPos.z >= 1:
+        cameraPos.z = .98
+    if cameraPos.x <= -1:
+        cameraPos.x = -.98
+    if cameraPos.y <= -.8:
+        cameraPos.y = -.8
+    if cameraPos.z <= -1:
+        cameraPos.z = -.98
 
 firstMouse = True
 yaw = -90.0
@@ -258,14 +259,6 @@ def mouse_event(window, xpos, ypos):
 glfw.set_key_callback(window, key_event)
 glfw.set_cursor_pos_callback(window, mouse_event)
 
-
-# ### Matrizes Model, View e Projection
-#
-# Teremos uma aula específica para entender o seu funcionamento.
-
-# In[ ]:
-
-
 def model(angle, r_x, r_y, r_z, t_x, t_y, t_z, s_x, s_y, s_z):
     angle = math.radians(angle)
 
@@ -298,20 +291,8 @@ def projection():
     mat_projection = np.array(mat_projection)
     return mat_projection
 
-
-# ### Nesse momento, exibimos a janela.
-
-# In[ ]:
-
-
 glfw.show_window(window)
 glfw.set_cursor_pos(window, lastX, lastY)
-
-# ### Loop principal da janela.
-# Enquanto a janela não for fechada, esse laço será executado. É neste espaço que trabalhamos com algumas interações com a OpenGL.
-
-# In[ ]:
-
 
 import math
 
@@ -335,12 +316,9 @@ while not glfw.window_should_close(window):
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE)
     if polygonal_mode == False:
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
-
+    model_geometrical_init_infos[8]['a'] += 0.1
     for idx,obj in enumerate(model_infos):
         obj_geo = model_geometrical_init_infos[idx]
-        if temp:
-            print(obj, idx, obj_geo)
-
         angle = obj_geo['a']
         r_x = obj_geo['r'][0]
         r_y = obj_geo['r'][1]
@@ -363,7 +341,6 @@ while not glfw.window_should_close(window):
 
         # desenha o modelo
         glDrawArrays(GL_TRIANGLES, obj['init'], obj['last']-1)  ## renderizando
-    temp = False
     mat_view = view()
     loc_view = glGetUniformLocation(program, "view")
     glUniformMatrix4fv(loc_view, 1, GL_TRUE, mat_view)
